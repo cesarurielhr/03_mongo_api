@@ -282,6 +282,7 @@ db.getCollection('aulas').insertMany([
 }
 ]);
 ´´´
+´´´
 ## Consultas MongoDB
 # Q1. Listar las materias que un alumno ha cursado.
 ´´´
