@@ -281,8 +281,10 @@ db.getCollection('aulas').insertMany([
   "descripcion_equipamiento": "Proyector, Pizarrón,Aire Acondicinado"
 }
 ]);
-
-// Q1. Listar las materias que un alumno ha cursado.
+´´´
+##Consultas MongoDB
+#Q1. Listar las materias que un alumno ha cursado.
+´´´
 use('db_alumnos');
 db.alumnos.aggregate([
   { $match: { _id: "CURP1234567890" } },
@@ -300,8 +302,9 @@ db.alumnos.aggregate([
       "calificacion": "$expediente_academico.calificacion"
   }}
 ]);
-//Q2. Listar los alumnos que están cursando una materia específica de un grupo específico.
-
+´´´
+#Q2. Listar los alumnos que están cursando una materia específica de un grupo específico.
+´´´
 use('db_alumnos');
 db.grupos.aggregate([
   { $match: { _id: "GRUPO01", materia_id: "MAT01" } },
@@ -313,7 +316,9 @@ db.grupos.aggregate([
   }},
   { $project: { "alumnos.nombre": 1, "alumnos.nctrl": 1 } }
 ]);
-//Q3. Listar las calificaciones de un alumno en todas sus materias cursadas.
+´´´
+#Q3. Listar las calificaciones de un alumno en todas sus materias cursadas.
+´´´
 use('db_alumnos');
 db.alumnos.aggregate([
   { $match: { _id: "CURP3456789012" } },
@@ -323,25 +328,30 @@ db.alumnos.aggregate([
       "calificacion": "$expediente_academico.calificacion"
   }}
 ]);
-
-//Q4. Listar los docentes que imparten una materia específica.
+´´´
+#Q4. Listar los docentes que imparten una materia específica.
+´´´
 use('db_alumnos');
-
 db.getCollection('docentes').find({
   materias: { $in: ["MAT02"] }
 }).pretty();
-//Q5. Listar los alumnos que han obtenido una calificación superior a 90 en una materia específica.
+´´´
+#Q5. Listar los alumnos que han obtenido una calificación superior a 90 en una materia específica.
+´´´
 use('escuela');
 db.alumnos.aggregate([
   { $unwind: "$expediente_academico" },
   { $match: { "expediente_academico.materia_id": "MAT01", "expediente_academico.calificacion": { $gt: 70 } } },
   { $project: { nombre: 1, nctrl: 1} }
 ]);
-
-//Q6. Listar los grupos que correspondan a una materia específica.
+´´´
+#Q6. Listar los grupos que correspondan a una materia específica.
+´´´
 use('db_alumnos');
 db.grupos.find({ materia_id: "MAT01" }, { _id: 1, horario: 1, aula: 1 });
-//Q7. Listar las materias que cursa un alumno en específico (horario).
+´´´
+#Q7. Listar las materias que cursa un alumno en específico (horario).
+´´´
 use('db_alumnos');
 db.grupos.aggregate([
   { $match: { estudiantes: "CURP1234567890" } },
@@ -353,7 +363,9 @@ db.grupos.aggregate([
   }},
   { $project: { "materia_info.nombre": 1, horario: 1 } }
 ]);
-//Q8. Listar las materias que faltan por cursar a un alumno en específico.
+´´´
+#Q8. Listar las materias que faltan por cursar a un alumno en específico.
+´´´
 use('db_alumnos');
 db.materias.aggregate([
   {
@@ -380,9 +392,9 @@ db.materias.aggregate([
     $project: { _id: 1, nombre: 1, carrera: 1, descripcion: 1 }
   }
 ]);
-
+´´´
 //Q9. Listar las materias que imparte un docente en específico, junto con los alumnos que cursan cada una de las materias.
-
+´´´
 use('db_alumnos');
 db.grupos.aggregate([
   { $match: { docente_id: "RFC1234567890" } },
