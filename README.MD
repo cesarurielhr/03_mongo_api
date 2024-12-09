@@ -1,6 +1,6 @@
 # DOCUMENTACION DE LA API ⚛️
 ## Bases de Datos NoSQL 🤟
-## LABORATORIO 02_NEO4J_API 🟣🟠🔵
+## LABORATORIO 03_MONGO_API 🟣🟠🔵
 
 > **DATOS DEL ALUMNO**🧑‍🎓
 > 
@@ -417,4 +417,183 @@ db.grupos.aggregate([
 ]);
 
 ```
+# Codigo del Docker-Compose
 
+```
+version: '3.8'
+
+services:
+  app:
+    image: 03_mongo_api:latest
+    container_name: replica-apis
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo-primary
+      - redis01
+    networks:
+      - red01
+    command: npm start
+  mongo-primary:
+    image: mongo
+    command: mongod --replSet replica01
+    ports:
+      - "27017:27017"
+    networks:
+      - red01
+
+  mongo-secondary1:
+    image: mongo
+    command: mongod --replSet replica01
+    ports:
+      - "27018:27017"
+    networks:
+      - red01
+
+  mongo-secondary2:
+    image: mongo
+    command: mongod --replSet replica01
+    ports:
+      - "27019:27017"
+    networks:
+      - red01
+
+  mongo-secondary3:
+    image: mongo
+    command: mongod --replSet replica01
+    ports:
+      - "27020:27017"
+    networks:
+      - red01
+
+  redis01:
+    image: redis/redis-stack:latest
+    container_name: redis01
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    networks:
+      - red01
+    depends_on:
+      - mongo-primary
+      - mongo-secondary1
+      - mongo-secondary2
+      - mongo-secondary3
+
+networks:
+  red01:
+    driver: bridge
+
+```
+# Solucion del ecenario con usando APIs que inclutan express,mongoose,redis con depedencia nodejs
+
+## Codigo index.js para iniciar el servidor
+
+```
+const schoolRoutes = require('./Routes/schoolRoutes');
+const materiasRoutes = require('./Routes/materiasRoutes');
+const dotenv = require('dotenv');
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+const cors = require('cors'); // Middleware para permitir solicitudes de recursos cruzados
+const logger = require("./Routes/logger");
+
+app.use(bodyParser.json());
+app.use(express.json());
+app.use(cors());
+app.use(logger);
+app.use('/alumnos', schoolRoutes)
+app.use('/materias',materiasRoutes);
+
+app.get('/', (req, res, next) => {
+    res.send(
+        `<h1>API RESTFULL de Carrito de Compras</h1> <p> Leer: <a href="docs.com">api-tasks-docs</a> para mas información.</p>`
+    );
+})
+
+app.use((req, res, next) => {
+    res.status(404).json({ code: 404, message: 'Ruta no encontrada' });
+});
+
+const connectDB = require('./config/database.config.js');
+
+dotenv.config();
+PORT = 3000;
+
+connectDB();
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
+```
+## Models 
+
+## codigo de schoolModels.js para el modelado de datos en mongoose
+
+```
+const mongoose = require('mongoose');
+
+const expedienteSchema = new mongoose.Schema({
+  materia_id: { type: String, required: true },
+  calificacion: { type: Number, min: 0, max: 100, default: null },
+  estado: {
+    type: String,
+    enum: ['Aprobada', 'Reprobada', 'En curso'],
+    required: true,
+  },
+  semestre: { type: Number, required: true },
+});
+
+const alumnoSchema = new mongoose.Schema({
+  _id: { type: String, required: true }, // CURP como ID
+  nctrl: { type: String, required: true, unique: true },
+  nombre: { type: String, required: true },
+  carrera: { type: String, required: true },
+  tecnologico: { type: String, required: true },
+  expediente_academico: { type: [expedienteSchema], default: [] },
+}, { versionKey: false });
+
+const materiaSchema = new mongoose.Schema({
+  _id: { type: String, required: true }, // ID de la materia
+  nombre: { type: String, required: true },
+  carrera: { type: String, required: true },
+  descripcion: { type: String, required: true },
+  plan_estudios: { type: String, required: true },
+}, { versionKey: false });
+
+
+
+const DocenteSchema = new mongoose.Schema({
+  _id: String,
+  nombre: String,
+  carrera: String,
+  tecnologico: String,
+  materias: [String]
+});
+
+const GrupoSchema = new mongoose.Schema({
+  _id: String,
+  materia_id: String,
+  docente_id: String,
+  estudiantes: [String],
+  aula: String,
+  horario: String
+});
+
+const AulaSchema = new mongoose.Schema({
+  _id: String,
+  edificio: String,
+  Grupos: [String],
+  descripcion_equipamiento: String
+});
+
+const Docente = mongoose.model('Docente', DocenteSchema);
+const Grupo = mongoose.model('Grupos', GrupoSchema);
+const Alumno = mongoose.model('alumnos', alumnoSchema);
+const Materia = mongoose.model('Materia', materiaSchema);
+const Aulas = mongoose.model('Aulas', AulaSchema) 
+
+module.exports = { Alumno, Materia, Grupo,Docente, Aulas };
+
+```
