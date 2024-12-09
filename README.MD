@@ -393,7 +393,7 @@ db.materias.aggregate([
   }
 ]);
 ´´´
-//Q9. Listar las materias que imparte un docente en específico, junto con los alumnos que cursan cada una de las materias.
+#Q9. Listar las materias que imparte un docente en específico, junto con los alumnos que cursan cada una de las materias.
 ´´´
 use('db_alumnos');
 db.grupos.aggregate([
