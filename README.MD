@@ -9,7 +9,7 @@
 > **Docente:** Jorge Saúl Montes Cáceres  
 
 ## CASO EJEMPLO 02 - Avance Académico del TecNM
-##Solucion con PLAYGROUND
+## Solucion con PLAYGROUND
 ```
 //caso 2
 use('db_alumnos');
@@ -282,8 +282,8 @@ db.getCollection('aulas').insertMany([
 }
 ]);
 ´´´
-##Consultas MongoDB
-#Q1. Listar las materias que un alumno ha cursado.
+## Consultas MongoDB
+# Q1. Listar las materias que un alumno ha cursado.
 ´´´
 use('db_alumnos');
 db.alumnos.aggregate([
@@ -303,7 +303,7 @@ db.alumnos.aggregate([
   }}
 ]);
 ´´´
-#Q2. Listar los alumnos que están cursando una materia específica de un grupo específico.
+# Q2. Listar los alumnos que están cursando una materia específica de un grupo específico.
 ´´´
 use('db_alumnos');
 db.grupos.aggregate([
@@ -317,7 +317,7 @@ db.grupos.aggregate([
   { $project: { "alumnos.nombre": 1, "alumnos.nctrl": 1 } }
 ]);
 ´´´
-#Q3. Listar las calificaciones de un alumno en todas sus materias cursadas.
+# Q3. Listar las calificaciones de un alumno en todas sus materias cursadas.
 ´´´
 use('db_alumnos');
 db.alumnos.aggregate([
@@ -329,14 +329,14 @@ db.alumnos.aggregate([
   }}
 ]);
 ´´´
-#Q4. Listar los docentes que imparten una materia específica.
+# Q4. Listar los docentes que imparten una materia específica.
 ´´´
 use('db_alumnos');
 db.getCollection('docentes').find({
   materias: { $in: ["MAT02"] }
 }).pretty();
 ´´´
-#Q5. Listar los alumnos que han obtenido una calificación superior a 90 en una materia específica.
+# Q5. Listar los alumnos que han obtenido una calificación superior a 90 en una materia específica.
 ´´´
 use('escuela');
 db.alumnos.aggregate([
@@ -345,12 +345,12 @@ db.alumnos.aggregate([
   { $project: { nombre: 1, nctrl: 1} }
 ]);
 ´´´
-#Q6. Listar los grupos que correspondan a una materia específica.
+# Q6. Listar los grupos que correspondan a una materia específica.
 ´´´
 use('db_alumnos');
 db.grupos.find({ materia_id: "MAT01" }, { _id: 1, horario: 1, aula: 1 });
 ´´´
-#Q7. Listar las materias que cursa un alumno en específico (horario).
+# Q7. Listar las materias que cursa un alumno en específico (horario).
 ´´´
 use('db_alumnos');
 db.grupos.aggregate([
@@ -364,7 +364,7 @@ db.grupos.aggregate([
   { $project: { "materia_info.nombre": 1, horario: 1 } }
 ]);
 ´´´
-#Q8. Listar las materias que faltan por cursar a un alumno en específico.
+# Q8. Listar las materias que faltan por cursar a un alumno en específico.
 ´´´
 use('db_alumnos');
 db.materias.aggregate([
@@ -393,7 +393,7 @@ db.materias.aggregate([
   }
 ]);
 ´´´
-#Q9. Listar las materias que imparte un docente en específico, junto con los alumnos que cursan cada una de las materias.
+# Q9. Listar las materias que imparte un docente en específico, junto con los alumnos que cursan cada una de las materias.
 ´´´
 use('db_alumnos');
 db.grupos.aggregate([
